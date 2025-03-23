@@ -1,6 +1,8 @@
 import { createServer, IncomingMessage, ServerResponse } from "http";
 import { URL } from "url";
 
+console.log(`Running in ${process.env.NODE_ENV} mode`);
+
 function handler(req: IncomingMessage, res: ServerResponse) {
   const url = new URL(req.url || "", `http://${req.headers.host}`);
   const name = url.searchParams.get("name") || "world";
