@@ -32,6 +32,7 @@
     "ejs": "^3.1.10",
     "finalhandler": "^2.1.0",
     "router": "^2.1.0",
+    "finalhandler": "^2.1.0",
     "serve-static": "^1.16.2"
   }
 }

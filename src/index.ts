@@ -1,10 +1,10 @@
-import ejs from "ejs"
-import finalhandler from "finalhandler";
+import ejs from "ejs";
+import finalHandler from "finalhandler";
 import { createServer, IncomingMessage, ServerResponse } from "http";
-import * as path from 'path';
+import path from "path";
 // @ts-ignore
-import Router from 'router';
-import serveStatic from 'serve-static';
+import Router from "router";
+import serveStatic from "serve-static";
 import { fileURLToPath, URL } from "url";
 
 function handler(req: IncomingMessage, res: ServerResponse) {
@@ -15,28 +15,27 @@ function handler(req: IncomingMessage, res: ServerResponse) {
 }
 
 function aboutHandler(req: IncomingMessage, res: ServerResponse) {
-  const viewPath = path.join(__dirname, 'views', 'about.ejs');
-  const aboutData = { name: "Hayato", interest: "coding" };
-  ejs.renderFile(viewPath, aboutData, (err: Error|null, html: string) => {
-    if (err !== null) {
-      res.writeHead(500, { "Content-Type": "text/plain" });
-      return res.end(`Error rendering EJS: ${err.message}`);
+  ejs.renderFile(
+    path.join(__dirname, "views", "about.ejs"),
+    { name: "Hayato", interests: "coding" },
+    (err: Error | null, aboutData: string) => {
+      if (err) {
+        res.writeHead(500, { "Content-Type": "text/plain" });
+        res.end("Error rendering EJS: " + err.message);
+        return;
+      }
+      res.writeHead(200, { "Content-Type": "text/html" });
+      res.end(aboutData);
     }
-    res.writeHead(200, { "Content-Type": "text/html" });
-    res.end(html);
-  });
+  );
 }
 
 const router = Router();
+router.use("/static", serveStatic(path.join(__dirname, "./public")));
+router.get("/about", aboutHandler);
+router.get("/", handler);
 
-// public フォルダを static ファイルとして提供する
-router.use('/static', serveStatic(path.join(__dirname, "../public")));
-router.get('/about', aboutHandler);
-router.get('/', handler);
+const server = createServer((req, res) => router(req, res, finalHandler(req, res)));
 
-// それ以外は 404 を返す
-const server = createServer((req, res) => router(req, res, finalhandler(req, res)));
-
-server.listen(3000, () => {
-  console.log("Server running at http://localhost:3000/");
-});
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
