@@ -2,7 +2,7 @@ import { getLoggedInUser} from "./authentication";
 import { URL } from "url";
 import type { IncomingMessage, ServerResponse } from "http";
 
-export function rootHandler(req: IncomingMessage, res: ServerResponse) {
+export default function rootHandler(req: IncomingMessage, res: ServerResponse) {
   const url = new URL(req.url || "", `http://${req.headers.host}`);
   const email: string | null = req.headers.cookie == null
     ? null

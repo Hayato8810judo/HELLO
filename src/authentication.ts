@@ -7,11 +7,10 @@ import * as path from 'path';
 import { parse as parseQuery } from 'querystring';
 import { parse as parseUrl } from 'url';
 
-import type { SerializeOptions } from 'cookie';
 import type { StringValue } from "ms";
 
 export const COOKIE_NAME = "session";
-const COOKIE_OPTIONS: SerializeOptions = {
+const COOKIE_OPTIONS: cookie.SerializeOptions = {
   httpOnly: true,
   path: '/',
   sameSite: 'strict',
