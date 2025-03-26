@@ -1,25 +1,40 @@
+import ejs from "ejs"
+import finalhandler from "finalhandler";
 import { createServer, IncomingMessage, ServerResponse } from "http";
-import path from 'path';
-import finalhandler from "finalhandler"
+import * as path from 'path';
 // @ts-ignore
 import Router from 'router';
 import serveStatic from 'serve-static';
-import { URL } from "url";
-
-console.log(`Running in ${process.env.NODE_ENV} mode`);
+import { fileURLToPath, URL } from "url";
 
 function handler(req: IncomingMessage, res: ServerResponse) {
   const url = new URL(req.url || "", `http://${req.headers.host}`);
   const name = url.searchParams.get("name") || "world";
-
   res.writeHead(200, { "Content-Type": "text/plain" });
   res.end(`Hello, ${name}!`);
 }
 
+function aboutHandler(req: IncomingMessage, res: ServerResponse) {
+  const viewPath = path.join(__dirname, 'views', 'about.ejs');
+  const aboutData = { name: "Hayato", interest: "coding" };
+  ejs.renderFile(viewPath, aboutData, (err: Error|null, html: string) => {
+    if (err !== null) {
+      res.writeHead(500, { "Content-Type": "text/plain" });
+      return res.end(`Error rendering EJS: ${err.message}`);
+    }
+    res.writeHead(200, { "Content-Type": "text/html" });
+    res.end(html);
+  });
+}
+
 const router = Router();
 
-router.use('/static', serveStatic(path.join(process.cwd(), 'public')))
+// public フォルダを static ファイルとして提供する
+router.use('/static', serveStatic(path.join(__dirname, "../public")));
+router.get('/about', aboutHandler);
 router.get('/', handler);
+
+// それ以外は 404 を返す
 const server = createServer((req, res) => router(req, res, finalhandler(req, res)));
 
 server.listen(3000, () => {
