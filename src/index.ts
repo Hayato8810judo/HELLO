@@ -1,3 +1,4 @@
+import ejs from "ejs"
 import finalhandler from "finalhandler";
 import { createServer, IncomingMessage, ServerResponse } from "http";
 import * as path from 'path';
@@ -13,10 +14,24 @@ function handler(req: IncomingMessage, res: ServerResponse) {
   res.end(`Hello, ${name}!`);
 }
 
+function aboutHandler(req: IncomingMessage, res: ServerResponse) {
+  const viewPath = path.join(__dirname, 'views', 'about.ejs');
+  const aboutData = { name: "Hayato", interest: "coding" };
+  ejs.renderFile(viewPath, aboutData, (err: Error|null, html: string) => {
+    if (err !== null) {
+      res.writeHead(500, { "Content-Type": "text/plain" });
+      return res.end(`Error rendering EJS: ${err.message}`);
+    }
+    res.writeHead(200, { "Content-Type": "text/html" });
+    res.end(html);
+  });
+}
+
 const router = Router();
 
 // public フォルダを static ファイルとして提供する
 router.use('/static', serveStatic(path.join(__dirname, "../public")));
+router.get('/about', aboutHandler);
 router.get('/', handler);
 
 // それ以外は 404 を返す
