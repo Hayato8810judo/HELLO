@@ -1,20 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title>Login Page</title>
-    <link rel="stylesheet" href="/static/styles.css">
-  </head>
-  <body>
-    <h1>Login</h1>
-    <% if (state === "INITIAL") { %>
-      <form action="/login" method="POST">
-        <input type="text" name="email" />
-        <button type="submit">Login</button>
-      </form>
-    <% } else if (state === "LINK_SENT") { %>
-      <p>Login link sent to <%= email %>.</p>
-    <% } %>
+<html lang="en" class="bg-gray-900 text-white">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+  <div class="w-full max-w-md p-8 bg-gray-800 rounded-2xl shadow-xl">
+    <h2 class="text-2xl font-semibold mb-6 text-center">Welcome Back</h2>
 
-  </body>
+    <form id="login-form" class="space-y-6">
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email address</label>
+        <input id="email" name="email"
+          class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          placeholder="you@example.com" required />
+        <div id="email-error" class="text-red-500 text-sm mt-1"></div>
+      </div>
+
+      <button type="submit"
+        class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white font-semibold transition">
+        Log In
+      </button>
+      <div id="login-success" class="text-green-400 text-center font-medium mt-4 hidden">
+        Success! Please check your inbox for further instructions.
+      </div>
+    </form>
+
+    <div id="flash" class="mt-4 text-red-500 text-sm text-center"></div>
+  </div>
+
+  <script src="/static/js/login.js" defer></script>
+</body>
 </html>
