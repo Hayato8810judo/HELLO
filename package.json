@@ -38,6 +38,7 @@
     "finalhandler": "^2.1.0",
     "jsonwebtoken": "^9.0.2",
     "router": "^2.1.0",
+    "finalhandler": "^2.1.0",
     "serve-static": "^1.16.2"
   }
 }
