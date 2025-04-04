@@ -1,25 +1,25 @@
-import ejs from "ejs";
+import { aboutHandler, listAllUsers, updateUserProfile } from "./about";
+import * as authentication from "./authentication";
 import finalHandler from "finalhandler";
 import { createServer, IncomingMessage, ServerResponse } from "http";
-import path from "path";
+import { join } from "path";
+import rootHandler from "./root";
 // @ts-ignore
 import Router from "router";
 import serveStatic from "serve-static";
 import { fileURLToPath, URL } from "url";
-import * as authentication from "./authentication";
 
 function handler(req: IncomingMessage, res: ServerResponse) {
   const url = new URL(req.url || "", `http://${req.headers.host}`);
-  const email: string | null = req.headers.cookie == null ? null : authentication.getLoggedInUser(req.headers.cookie);
-  const name = email ?? url.searchParams.get("name") ?? "world";
+  const name = authentication.getLoggedInUser(req.headers.cookie);
   res.writeHead(200, { "Content-Type": "text/plain" });
-  res.end(`Hello, ${name}!`);
+  res.end(`Hello, ${name}`);
 }
 
 function aboutHandler(req: IncomingMessage, res: ServerResponse) {
   ejs.renderFile(
     path.join(__dirname, "views", "about.ejs"),
-    { name: "Hayato", interests: "coding" },
+    { name: "Hayato", interests: "Coding" },
     (err: Error | null, aboutData: string) => {
       if (err) {
         res.writeHead(500, { "Content-Type": "text/plain" });
@@ -33,21 +33,21 @@ function aboutHandler(req: IncomingMessage, res: ServerResponse) {
 }
 
 const router = Router();
-router.use("/static", serveStatic(path.join(__dirname, "./public")));
+router.use("/static", serveStatic(join(__dirname, "./public")));
+router.get("/", rootHandler);
 router.get("/about", aboutHandler);
-router.get("/", handler);
+router.get("/about/users", listAllUsers);
+router.post("/about/user", updateUserProfile);
+router.get("/login", authentication.loginPage);
+router.post("/login", authentication.login);
+router.get("/login/token", authentication.claim);
+router.get("/logout", authentication.logout);
 
 const server = createServer((req, res) => router(req, res, finalHandler(req, res)));
-
-
-router.get('/login', authentication.loginPage);
-router.post('/login', authentication.login);
-router.get('/login/:token', authentication.claim);
-router.get('/logout', authentication.logout);
-
-// それ以外は 404 を返す
-const server = createServer((req, res) => router(req, res, finalhandler(req, res)));
 
 server.listen(3000, () => {
   console.log("Server running at http://localhost:3000/");
 });
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);

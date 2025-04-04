@@ -6,7 +6,12 @@
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-  <h1>About Me</h1>
-  <p>My name is <%= name %>. I love judo and <%= interest %>!</p>
+  <ul>
+  <% users.forEach(function(user) { %>
+    <li>
+      <a href="/about/<%= user.email %>"><%= user.name %></a>
+    </li>
+  <% }) %>
+  </ul>
 </body>
 </html>

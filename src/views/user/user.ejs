@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>About Page</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <h1><%= loggedInUserEmail === profileUser.email ? "About Me" : profileUser.name %></h1>
+  <% if (loggedInUserEmail === profileUser.email) { %>
+    <form method="POST" action="/about">
+      <p>My name is <input type="text" name="name" value="<%= profileUser.name %>">. I love judo and <input type="text" name="interest" value="<%= profileUser.interest %>">!</p>
+      <button type="submit">Save</button>
+    </form>
+  <% } else { %>
+    <p>My name is <%= profileUser.name %>. I love judo and <%= profileUser.interest %>!</p>
+  <% } %>
+</body>
+</html>
