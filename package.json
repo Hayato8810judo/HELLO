@@ -8,5 +8,5 @@
     "type": "git",
     "url": "git+https://github.com/Hayato8810judo/HELLO.git"
   },
-  "workspaces": [ "api-server" ]
+  "workspaces": [ "api-server", "frontend" ]
 }

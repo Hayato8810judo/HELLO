@@ -1,0 +1,76 @@
+import type { Athlete } from "~/models/athlete.server";
+
+export const athletesFixture: Athlete[] = [
+  {
+    "id": "01JRV45B0N7JKFGETA4GT5ZN3X",
+    "createdByUserId": "01JRV4808VEQHDCBV1YQ1330ZY",
+    "name": "Hayato Nagashima",
+    "nationality": "JPN",
+    "clubId": "",
+    "createdAt": "2025-04-04T00:02:55Z",
+    "updatedAt": "2025-04-04T00:02:55Z"
+  },
+  {
+    "id": "01JRV45B0R8HQGRBYXXY0YD098",
+    "createdByUserId": "01JRV4808VEQHDCBV1YQ1330ZY",
+    "name": "Curtis Steckel",
+    "nationality": "USA",
+    "clubId": "01JRV426S9JBSMY6NDD7HGGAHW",
+    "createdAt": "2025-04-04T00:02:55Z",
+    "updatedAt": "2025-04-04T00:02:55Z"
+  },
+  {
+    "id": "01JRV45B0R8HQGRBYXXY0YD099",
+    "createdByUserId": "01JRV4808VEQHDCBV1YQ1330ZY",
+    "name": "Desmond Steckel",
+    "clubId": "01JRV426S9JBSMY6NDD7HGGAHW",
+    "nationality": "USA",
+    "createdAt": "2025-04-04T00:02:55Z",
+    "updatedAt": "2025-04-04T00:02:55Z"
+  },
+  {
+    "id": "01JRV45B0R8HQGRBYXXY0YD09A",
+    "createdByUserId": "01JRV4808VEQHDCBV1YQ1330ZY",
+    "name": "Lev Goncharenko",
+    "nationality": "USA",
+    "clubId": "01JRV426SDADCZC8DNY5BDV4GH",
+    "createdAt": "2025-04-04T00:02:55Z",
+    "updatedAt": "2025-04-04T00:02:55Z"
+  },
+  {
+    "id": "01JRV45B0R8HQGRBYXXY0YD09B",
+    "createdByUserId": "01JRV4808VEQHDCBV1YQ1330ZY",
+    "name": "Leonid Mishin",
+    "nationality": "RUS",
+    "clubId": "01JRV426SDADCZC8DNY5BDV4GJ",
+    "createdAt": "2025-04-04T00:02:55Z",
+    "updatedAt": "2025-04-04T00:02:55Z"
+  },
+  {
+    "id": "01JRV45B0R8HQGRBYXXY0YD09C",
+    "createdByUserId": "01JRV4808VEQHDCBV1YQ1330ZY",
+    "name": "Arietbek Azimbek",
+    "nationality": "USA",
+    "clubId": "01JRV426SDADCZC8DNY5BDV4GK",
+    "createdAt": "2025-04-04T00:02:55Z",
+    "updatedAt": "2025-04-04T00:02:55Z"
+  },
+  {
+    "id": "01JRV45B0R8HQGRBYXXY0YD09D",
+    "createdByUserId": "01JRV4808VEQHDCBV1YQ1330ZY",
+    "name": "Gaspard Dimier",
+    "nationality": "FRA",
+    "clubId": "01JRV426SDADCZC8DNY5BDV4GM",
+    "createdAt": "2025-04-04T00:02:55Z",
+    "updatedAt": "2025-04-04T00:02:55Z"
+  },
+  {
+    "id": "01JRV45B0R8HQGRBYXXY0YD09E",
+    "createdByUserId": "01JRV4808VEQHDCBV1YQ1330ZY",
+    "name": "Arman Kanapin",
+    "nationality": "USA",
+    "clubId": "01JRV426SDADCZC8DNY5BDV4GN",
+    "createdAt": "2025-04-04T00:02:55Z",
+    "updatedAt": "2025-04-04T00:02:55Z"
+  }
+];
