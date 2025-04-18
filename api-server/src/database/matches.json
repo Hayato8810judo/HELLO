@@ -1,0 +1,182 @@
+[
+  {
+    "id": "QphVrdQ",
+    "athletes": ["01JRV45B0R8HQGRBYXXY0YD09E", "01JRV45B0R8HQGRBYXXY0YD09B"],
+    "match": 1,
+    "round": 1,
+    "start": "20250404T0959",
+    "duration": "00:06",
+    "winner": "01JRV45B0R8HQGRBYXXY0YD09B",
+    "score": [
+      {
+        "athleteId": "01JRV45B0R8HQGRBYXXY0YD09B",
+        "points": 10
+      }
+    ]
+  },
+  {
+    "id": "7BTKw9t",
+    "athletes": ["01JRV45B0R8HQGRBYXXY0YD09A", "01JRV45B0R8HQGRBYXXY0YD09C"],
+    "match": 2,
+    "round": 1,
+    "start": "20250404T1001",
+    "duration": "02:00",
+    "winner": "01JRV45B0R8HQGRBYXXY0YD09A",
+    "score": [
+      {
+        "athleteId": "01JRV45B0R8HQGRBYXXY0YD09A",
+        "points": 7
+      }
+    ]
+  },
+  {
+    "id": "yuAIIxw",
+    "athletes": ["01JRV45B0R8HQGRBYXXY0YD09D", "01JRV45B0R8HQGRBYXXY0YD099"],
+    "match": 3,
+    "round": 1,
+    "start": "20250404T1005",
+    "duration": "00:21",
+    "winner": "01JRV45B0R8HQGRBYXXY0YD099",
+    "score": [
+      {
+        "athleteId": "01JRV45B0R8HQGRBYXXY0YD099",
+        "points": 10
+      }
+    ]
+  },
+  {
+    "id": "_dIPk6M",
+    "athletes": ["01JRV45B0R8HQGRBYXXY0YD09B", "01JRV45B0R8HQGRBYXXY0YD09A"],
+    "match": 4,
+    "round": 2,
+    "start": "20250404T1007",
+    "duration": "01:30",
+    "winner": "01JRV45B0R8HQGRBYXXY0YD09A",
+    "score": [
+      {
+        "athleteId": "01JRV45B0R8HQGRBYXXY0YD09A",
+        "points": 10
+      }
+    ]
+  },
+  {
+    "id": "noHC0j6",
+    "athletes": ["01JRV45B0R8HQGRBYXXY0YD09C", "01JRV45B0R8HQGRBYXXY0YD09D"],
+    "match": 5,
+    "round": 2,
+    "start": "20250404T1009",
+    "duration": "01:13",
+    "winner": "01JRV45B0R8HQGRBYXXY0YD09C",
+    "score": [
+      {
+        "athleteId": "01JRV45B0R8HQGRBYXXY0YD09C",
+        "points": 10
+      }
+    ]
+  },
+  {
+    "id": "r016E8h",
+    "athletes": ["01JRV45B0R8HQGRBYXXY0YD09E", "01JRV45B0R8HQGRBYXXY0YD099"],
+    "match": 6,
+    "round": 2,
+    "start": "20250404T1012",
+    "duration": "02:00",
+    "winner": "01JRV45B0R8HQGRBYXXY0YD09E",
+    "score": [
+      {
+        "athleteId": "01JRV45B0R8HQGRBYXXY0YD09E",
+        "points": 7
+      }
+    ]
+  },
+  {
+    "id": "YDaq4Eb",
+    "athletes": ["01JRV45B0R8HQGRBYXXY0YD09B", "01JRV45B0R8HQGRBYXXY0YD09C"],
+    "match": 7,
+    "round": 3,
+    "start": "20250404T1016",
+    "duration": "00:36",
+    "winner": "01JRV45B0R8HQGRBYXXY0YD09B",
+    "score": [
+      {
+        "athleteId": "01JRV45B0R8HQGRBYXXY0YD09B",
+        "points": 10
+      }
+    ]
+  },
+  {
+    "id": "AFSUlL2",
+    "athletes": ["01JRV45B0R8HQGRBYXXY0YD09E", "01JRV45B0R8HQGRBYXXY0YD09A"],
+    "match": 8,
+    "round": 3,
+    "start": "20250404T1018",
+    "duration": "00:40",
+    "winner": "01JRV45B0R8HQGRBYXXY0YD09A",
+    "score": [
+      {
+        "athleteId": "01JRV45B0R8HQGRBYXXY0YD09A",
+        "points": 10
+      }
+    ]
+  },
+  {
+    "id": "ARRRmCl",
+    "athletes": ["01JRV45B0R8HQGRBYXXY0YD09C", "01JRV45B0R8HQGRBYXXY0YD099"],
+    "match": 9,
+    "round": 3,
+    "start": "20250404T1019",
+    "duration": "01:46",
+    "winner": "01JRV45B0R8HQGRBYXXY0YD09C",
+    "score": [
+      {
+        "athleteId": "01JRV45B0R8HQGRBYXXY0YD09C",
+        "points": 10
+      }
+    ]
+  },
+  {
+    "id": "Vv-sH-h",
+    "athletes": ["01JRV45B0R8HQGRBYXXY0YD09A", "01JRV45B0R8HQGRBYXXY0YD09D"],
+    "match": 10,
+    "round": 4,
+    "start": "20250404T1022",
+    "duration": "00:30",
+    "winner": "01JRV45B0R8HQGRBYXXY0YD09A",
+    "score": [
+      {
+        "athleteId": "01JRV45B0R8HQGRBYXXY0YD09A",
+        "points": 10
+      }
+    ]
+  },
+  {
+    "id": "eRM_Fj_",
+    "athletes": ["01JRV45B0R8HQGRBYXXY0YD09B", "01JRV45B0R8HQGRBYXXY0YD099"],
+    "match": 11,
+    "round": 4,
+    "start": "20250404T1024",
+    "duration": "00:09",
+    "winner": "01JRV45B0R8HQGRBYXXY0YD09B",
+    "score": [
+      {
+        "athleteId": "01JRV45B0R8HQGRBYXXY0YD09B",
+        "points": 10
+      }
+    ]
+  },
+  {
+    "id": "YzH8gZw",
+    "athletes": ["01JRV45B0R8HQGRBYXXY0YD09E", "01JRV45B0R8HQGRBYXXY0YD09D"],
+    "match": 12,
+    "round": 4,
+    "start": "20250404T1025",
+    "duration": "01:27",
+    "winner": "01JRV45B0R8HQGRBYXXY0YD09D",
+    "score": [
+      {
+        "athleteId": "01JRV45B0R8HQGRBYXXY0YD09D",
+        "points": 10
+      }
+    ]
+  }
+]
