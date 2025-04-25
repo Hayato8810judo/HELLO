@@ -1,38 +1,14 @@
 import anyBody from 'body/any';
-import * as cookie from 'cookie';
-import ejs from "ejs"
 import { IncomingMessage, ServerResponse } from "http";
-import jwt, { TokenExpiredError, JsonWebTokenError, SignOptions } from "jsonwebtoken";
-import * as path from 'path';
-import { parse as parseQuery } from 'querystring';
-import { parse as parseUrl } from 'url';
+import jwt, { TokenExpiredError, SignOptions } from "jsonwebtoken";
+import { default as ms, type StringValue} from "ms";
+import { getConfig } from "./config"
 
-import type { StringValue } from "ms";
+const { APPLICATION_AUTH_CLAIM_PREFIX, JWT_CLAIM_SECRET, JWT_SESSION_SECRET } = getConfig();
 
-export const COOKIE_NAME = "session";
-const COOKIE_OPTIONS: cookie.SerializeOptions = {
-  httpOnly: true,
-  path: '/',
-  sameSite: 'strict',
-  secure: true,
-};
-
-const LOGIN_VIEW_PATH = path.join(__dirname, 'views', 'login.ejs');
-
-const JWT_CLAIM_SECRET: string = process.env.JWT_CLAIM_SECRET ?? (() => {
-  throw new Error("Missing JWT_CLAIM_SECRET environment variable");
-})();
-
-const JWT_SESSION_SECRET: string = process.env.JWT_SESSION_SECRET ?? (() => {
-  throw new Error("Missing JWT_SESSION_SECRET environment variable");
-})();
-
-export function getLoggedInUser(cookieString: string): string | null {
-  const cookies = cookie.parse(cookieString);
-  const encodedCookieToken: string | undefined = cookies[COOKIE_NAME];
-  if (encodedCookieToken == null) return null;
+export function getLoggedInUser(encodedToken: string): string | null {
   try {
-    const claim = jwt.verify(encodedCookieToken, JWT_SESSION_SECRET)
+    const claim = jwt.verify(encodedToken, JWT_SESSION_SECRET)
     if (typeof claim === "string") throw new Error("claim should be an object");
     if (claim.email == null) throw new Error("email expected in claim token");
     return claim.email;
@@ -47,91 +23,145 @@ function generateToken(email: string, expiresIn: StringValue, secret: string): s
   return jwt.sign(payload, secret, options);
 }
 
-export async function loginPage(req: IncomingMessage, res: ServerResponse) {
-  ejs.renderFile(LOGIN_VIEW_PATH, { state: 'INITIAL' }, function(err: Error | null, html: string) {
-    if (err !== null) {
-      res.writeHead(500, { "Content-Type": "text/plain" });
-      return res.end(`Error rendering EJS: ${err.message}`);
-    }
-    res.writeHead(200, { "Content-Type": "text/html" });
-    res.end(html);
-  });
-}
-
-export async function login(req: IncomingMessage, res: ServerResponse) {
-  anyBody(req, function(err, body) {
+/**
+ * Handles a POST request to initiate an authentication flow by creating a short-lived claim token.
+ *
+ * The request body must include an `email` field. If valid, a JWT is created and printed to the console (if not in production).
+ * The token is encoded in a magic link that can be sent to the user for passwordless login.
+ *
+ * @param req - Incoming HTTP request, expected to contain a JSON body with an `email` field.
+ * @param res - HTTP response, used to return a success or error status.
+ *
+ * @returns 200 OK with an empty body on success, or 400 Bad Request with an error message if the email is missing or malformed.
+ */
+export function createClaim(req: IncomingMessage, res: ServerResponse) {
+  anyBody(req, function(err: Error | null, body: unknown) {
     if (err !== null) {
       res.writeHead(400, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ error: "Invalid body" }));
       return;
     }
 
-    const email = (body as Record<string, string>)["email"];
+    const email: string | null = body != null && typeof body === "object" && "email" in body
+      ? (typeof body.email === "string" ? body.email : null)
+      : null;
+
     if (email == null || email === "") {
       res.writeHead(400, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ error: "Email is required" }));
+      res.end(JSON.stringify({ error: "email is required" }));
       return;
     }
 
     const authnClaimToken: string = generateToken(email, "10m", JWT_CLAIM_SECRET);
-    const magicLink: string = `http://localhost:3000/login/${authnClaimToken}`;
+    const magicLink: string = APPLICATION_AUTH_CLAIM_PREFIX + authnClaimToken;
 
     if (process.env.NODE_ENV !== "production") {
       console.log(`Magic link for ${email}: ${magicLink}`);
     }
 
-    ejs.renderFile(LOGIN_VIEW_PATH, { state: 'LINK_SENT', email }, (err: Error | null, html: string) => {
-      if (err !== null) {
-        res.writeHead(500, { "Content-Type": "text/plain" });
-        return res.end(`Error rendering EJS: ${err.message}`);
-      }
-      res.writeHead(200, { "Content-Type": "text/html" });
-      res.end(html);
-    });
+    res.writeHead(200, { "Content-Type": "application/json" });
+    return res.end(JSON.stringify({}));
   });
 }
 
-export async function claim(req: IncomingMessage & { params: {"token": string} }, res: ServerResponse) {
-  try {
-    const encodedToken: string | undefined = req.params["token"];
-    if (encodedToken == null) throw new Error("expected params['token'] to exist");
-
-    const claim = jwt.verify(encodedToken, JWT_CLAIM_SECRET)
-    if (typeof claim === "string") throw new Error("claim should be an object");
-    if (claim.email == null) throw new Error("email expected in claim token");
-
-    const sessionToken: string = generateToken(claim.email, "7d", JWT_SESSION_SECRET);
-    const cookieValue = cookie.serialize(COOKIE_NAME, sessionToken, COOKIE_OPTIONS);
-    res.setHeader('Set-Cookie', cookieValue);
-    res.statusCode = 302;
-    res.setHeader('Location', '/');
-    res.end();
-    return;
-  } catch (err: unknown) {
-    if (err instanceof TokenExpiredError) {
-      const data = { state: 'INITIAL', error: "Magic link expired. Please try again." };
-      ejs.renderFile(LOGIN_VIEW_PATH, data, function(err: Error | null, html: string) {
-        if (err !== null) {
-          res.writeHead(500, { "Content-Type": "text/plain" });
-          return res.end(`Error rendering EJS: ${err.message}`);
-        }
-        res.writeHead(200, { "Content-Type": "text/html" });
-        res.end(html);
-      });
+/**
+ * Exchanges a claim token for a session token (Bearer token).
+ *
+ * The request body must include a valid `token` field (the claim). If verified, a long-lived session JWT is issued.
+ * The response includes the token, token type, expiration, and user email.
+ *
+ * @param req - Incoming HTTP request, expected to contain a JSON body with a `token` field.
+ * @param res - HTTP response, used to return the session token or an error message.
+ *
+ * @returns 200 OK with a JSON payload containing the session token, token type, expiration time in milliseconds, and user info.
+ *          400 Bad Request or 500 Internal Server Error on failure.
+ */
+export function createSession(req: IncomingMessage, res: ServerResponse) {
+  anyBody(req, function(err: Error | null, body: unknown) {
+    if (err !== null) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Invalid body" }));
       return;
     }
 
-    console.error(err);
-    res.writeHead(500, { "Content-Type": "text/plain" });
-    res.end("something went wrong");
-    return;
-  }
+
+    const token: string | null = body != null && typeof body === "object" && "token" in body
+      ? (typeof body.token === "string" ? body.token : null)
+      : null;
+
+    if (token == null || token === "") {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "token is required" }));
+      return;
+    }
+
+    try {
+      const claim = jwt.verify(token, JWT_CLAIM_SECRET)
+      if (typeof claim === "string") throw new Error("claim should be an object");
+      if (claim.email == null) throw new Error("email expected in claim token");
+
+      const expirationString = "7d";
+      const sessionToken: string = generateToken(claim.email, expirationString, JWT_SESSION_SECRET);
+      const response = {
+        "access_token": sessionToken,
+        "token_type": "Bearer",
+        "exp": ms(expirationString),
+        "user": { "email": claim.email },
+      };
+
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify(response));
+      return;
+    } catch (err: unknown) {
+      if (err instanceof TokenExpiredError) {
+        res.writeHead(500, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: "authentication claim could not be decoded" }));
+        return;
+      }
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "an unexpected error occurred" }));
+    }
+  });
 }
 
-export async function logout(req: IncomingMessage, res: ServerResponse) {
-  const cookieValue = cookie.serialize(COOKIE_NAME, '', COOKIE_OPTIONS);
-  res.setHeader('Set-Cookie', cookieValue);
-  res.statusCode = 302;
-  res.setHeader('Location', '/');
-  res.end();
+/**
+ * Reads and validates a session token provided as a URL parameter.
+ *
+ * The token is verified and its contents (email and expiration) are returned in the response.
+ * This is useful for debugging or introspecting session tokens client-side.
+ *
+ * @param req - Incoming HTTP request with a `params` object containing a `token` field.
+ * @param res - HTTP response, used to return token contents or an error.
+ *
+ * @returns 200 OK with a JSON payload containing the access token, token type, expiration, and user email.
+ *          500 Internal Server Error if the token is missing or invalid.
+ */
+export function readSession(req: IncomingMessage & { params: {"token": string} }, res: ServerResponse) {
+  // router adds params to IncomingMessage
+  const token = req.params.token;
+  if (typeof token != "string") {
+    res.writeHead(500, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ error: "token is required" }));
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SESSION_SECRET);
+    if (typeof decoded === "string") throw new Error("decoded token should be an object");
+    if (decoded.email == null) throw new Error("email expected in decoded token");
+    if (decoded.exp == null) throw new Error("exp expected in decoded token");
+
+    const response = {
+      "access_token": token,
+      "token_type": "Bearer",
+      "exp": decoded.exp,
+      "user": { "email": decoded.email },
+    };
+
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify(response));
+  } catch (e) {
+    res.writeHead(500, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ error: "an unexpected error occurred" }));
+  }
 }

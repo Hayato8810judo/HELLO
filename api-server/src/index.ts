@@ -31,10 +31,9 @@ router.get('/about', listAllUsers);
 router.get('/about/:user', aboutHandler);
 router.post('/about/:user', updateUserProfile);
 
-router.get('/login', authentication.loginPage);
-router.post('/login', authentication.login);
-router.get('/login/:token', authentication.claim);
-router.get('/logout', authentication.logout);
+router.post("/authn-claim", authentication.createClaim);         // create authn-claim
+router.post("/authn-session", authentication.createSession);     // create authn-session
+router.get("/authn-session/:token", authentication.readSession); // read authn-session (whoami)
 
 const server = createServer((req, res) => router(req, res, finalHandler(req, res)));
 

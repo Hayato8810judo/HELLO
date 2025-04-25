@@ -15,7 +15,7 @@
   "scripts": {
     "build": "tsc",
     "start": "NODE_ENV=production node dist/index.js",
-    "dev": "JWT_SESSION_SECRET=blackbelt  JWT_CLAIM_SECRET=whitebelt ts-node src/index.ts",
+    "dev": "ts-node src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
@@ -34,6 +34,7 @@
   "dependencies": {
     "body": "^5.1.0",
     "cookie": "^1.0.2",
+    "dotenv": "^16.5.0",
     "ejs": "^3.1.10",
     "finalhandler": "^2.1.0",
     "jsonwebtoken": "^9.0.2",
